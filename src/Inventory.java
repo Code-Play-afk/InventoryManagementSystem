@@ -10,15 +10,15 @@ public class Inventory {
     items = new ArrayList<>();
   }
 
-  public void addItem(Item item) {
+  protected void addItem(Item item) {
     items.add(item);
   }
 
-  public void removeItem(Item item) {
+  protected void removeItem(Item item) {
     items.remove(item);
   }
 
-  public Item findItem(String sku) {
+  protected Item findItem(String sku) {
     for (Item item : items) {
       if (item.getSku().equals(sku)) {
         return item;
@@ -27,7 +27,7 @@ public class Inventory {
     return null;
   }
 
-  public void display() {
+  protected void display() {
     System.out.println("Inventory:");
     for (Item item : items) {
       item.display();

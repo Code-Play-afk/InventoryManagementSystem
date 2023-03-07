@@ -20,43 +20,43 @@ public class Item {
     this.price = price;
   }
 
-  public String getSku() {
+  protected String getSku() {
     return sku;
   }
 
-  public String getName() {
+  protected String getName() {
     return name;
   }
 
-  public void setName(String name) {
+  protected void setName(String name) {
     this.name = name;
   }
 
-  public String getCategory() {
+  protected String getCategory() {
     return category;
   }
 
-  public void setCategory(String category) {
+  protected void setCategory(String category) {
     this.category = category;
   }
 
-  public int getQuantity() {
+  protected int getQuantity() {
     return quantity;
   }
 
-  public void setQuantity(int quantity) {
+  protected void setQuantity(int quantity) {
     this.quantity = quantity;
   }
 
-  public double getPrice() {
+  protected double getPrice() {
     return price;
   }
 
-  public void setPrice(double price) {
+  protected void setPrice(double price) {
     this.price = price;
   }
 
-  public void display() {
+  protected void display() {
     System.out.println("SKU: " + sku);
     System.out.println("Name: " + name);
     System.out.println("Category: " + category);

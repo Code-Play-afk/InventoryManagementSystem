@@ -1,18 +1,22 @@
-// import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class App {
 
-  private static Scanner scanner = new Scanner(System.in);
-  private static String username = "user";
-  private static String password = "pass";
-
-  private static ArrayList<Item> inventory = new ArrayList<Item>();
-
   // ! ||--------------------------------------------------------------------------------||
   // ! ||                                      M                                         ||
   // ! ||--------------------------------------------------------------------------------||
+
+  private static Scanner scanner = new Scanner(System.in);
+  private static String username = "user";
+  private static String password = "pass";
+  private static ArrayList<Item> inventory = new ArrayList<Item>();
+  private static String csvFilePath = "src\\stock.csv";
 
   private static boolean validateLogin(
     String inputUsername,
@@ -27,7 +31,7 @@ public class App {
     }
   }
 
-  private static void addItem() {
+  private static void addItem() throws IOException {
     System.out.println("\nAdd new item");
     System.out.println("------------");
     System.out.print("Enter SKU: ");
@@ -45,10 +49,11 @@ public class App {
     Item item = new Item(sku, name, category, quantity, price);
     inventory.add(item);
     System.out.println("Item added to inventory.");
+    writeStockToCSV(inventory, csvFilePath);
     printInventory();
   }
 
-  private static void removeItem() {
+  private static void removeItem() throws IOException {
     printInventory();
     System.out.print("Enter SKU of item to remove: ");
     String sku = scanner.nextLine();
@@ -58,6 +63,7 @@ public class App {
       if (item.getSku().equals(sku)) {
         inventory.remove(item);
         itemRemoved = true;
+        writeStockToCSV(inventory, csvFilePath);
         break;
       }
     }
@@ -70,7 +76,7 @@ public class App {
     }
   }
 
-  private static void updateItem() {
+  private static void updateItem() throws IOException {
     printInventory();
     System.out.print("Enter SKU of item to update: ");
     String sku = scanner.nextLine();
@@ -105,16 +111,70 @@ public class App {
           item.setQuantity(quantity);
         }
         itemUpdated = true;
-        System.out.println("\nItem updated.");
-        printInventory();
-
         break;
       }
     }
 
-    if (!itemUpdated) {
+    if (itemUpdated) {
+      writeStockToCSV(inventory, csvFilePath);
+      System.out.println("\nItem updated.");
+      printInventory();
+    } else {
       System.out.println("\nItem not found in inventory.");
     }
+  }
+
+  private static void writeStockToCSV(
+    ArrayList<Item> inventory,
+    String filename
+  ) throws IOException {
+    try {
+      BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+      // String[] header = { "SKU", "Name", "Category", "Price", "Quantity" };
+      // writer.writeNext(header);
+      for (Item item : inventory) {
+        writer.write(
+          item.getSku() +
+          "," +
+          item.getName() +
+          "," +
+          item.getCategory() +
+          "," +
+          Double.toString(item.getPrice()) +
+          "," +
+          Integer.toString(item.getQuantity()) +
+          "\n"
+        );
+      }
+      writer.close();
+    } catch (IOException e) {
+      System.out.println("The file could not be found.write\n");
+      e.printStackTrace();
+    }
+  }
+
+  private static ArrayList<Item> readStockFromCSV(String filename) {
+    ArrayList<Item> inventory = new ArrayList<Item>();
+    String line = "";
+    String csvSplitter = ",";
+    try {
+      BufferedReader reader = new BufferedReader(new FileReader(filename));
+      while ((line = reader.readLine()) != null) {
+        String[] data = line.split(csvSplitter);
+        String sku = data[0];
+        String name = data[1];
+        String category = data[2];
+        double price = Double.parseDouble(data[3]);
+        int quantity = Integer.parseInt(data[4]);
+        Item item = new Item(sku, name, category, quantity, price);
+        inventory.add(item);
+      }
+      reader.close();
+    } catch (IOException e) {
+      System.out.println("The file could not be found.read\n");
+      e.printStackTrace();
+    }
+    return inventory;
   }
 
   // ! ||--------------------------------------------------------------------------------||
@@ -160,14 +220,14 @@ public class App {
   // ! ||--------------------------------------------------------------------------------||
   // ! ||                                      C                                         ||
   // ! ||--------------------------------------------------------------------------------||
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     System.out.println("");
     controlProgram();
     scanner.close();
     System.out.println("");
   }
 
-  static void controlProgram() {
+  static void controlProgram() throws IOException {
     boolean passedUserValidation = false;
     System.out.println("User Login");
     System.out.println("----------");
@@ -178,6 +238,7 @@ public class App {
       String password = scanner.nextLine();
       passedUserValidation = validateLogin(username, password);
       if (passedUserValidation) {
+        inventory = readStockFromCSV(csvFilePath);
         break;
       }
     } while (!passedUserValidation);
@@ -185,7 +246,7 @@ public class App {
     while (!quit) {
       printMenu();
       int choice = scanner.nextInt();
-      scanner.nextLine(); // consume the newline character
+      scanner.nextLine();
       switch (choice) {
         case 1:
           addItem();
