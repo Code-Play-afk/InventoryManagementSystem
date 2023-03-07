@@ -1,9 +1,10 @@
 import java.util.ArrayList;
-import java.util.List;
+
+// import java.util.List;
 
 public class Inventory {
 
-  private List<Item> items;
+  private ArrayList<Item> items;
 
   public Inventory() {
     items = new ArrayList<>();

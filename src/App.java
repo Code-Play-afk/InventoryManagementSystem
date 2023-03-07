@@ -10,61 +10,16 @@ public class App {
 
   private static ArrayList<Item> inventory = new ArrayList<Item>();
 
-  public static void main(String[] args) {
-    System.out.println("");
-    controlProgram();
-    scanner.close();
-    System.out.println("");
-  }
-
-  static void controlProgram() {
-    boolean passedUserValidation = false;
-    do {
-      System.out.println("Enter username: ");
-      String username = scanner.nextLine();
-      System.out.println("Enter password: ");
-      String password = scanner.nextLine();
-      System.out.println("");
-      passedUserValidation = validateLogin(username, password);
-      if (passedUserValidation) {
-        // scanner.close();
-        break;
-      }
-    } while (!passedUserValidation);
-    boolean quit = false;
-    while (!quit) {
-      printMenu();
-      int choice = scanner.nextInt();
-      scanner.nextLine(); // consume the newline character
-      switch (choice) {
-        case 1:
-          addItem();
-          break;
-        case 2:
-          removeItem();
-          break;
-        case 3:
-          updateItem();
-          break;
-        case 4:
-          printInventory();
-          break;
-        case 5:
-          quit = true;
-          break;
-        default:
-          System.out.println("Invalid choice.");
-          break;
-      }
-    }
-  }
+  // ! ||--------------------------------------------------------------------------------||
+  // ! ||                                      M                                         ||
+  // ! ||--------------------------------------------------------------------------------||
 
   private static boolean validateLogin(
     String inputUsername,
     String inputPassword
   ) {
     if (username.equals(inputUsername) && password.equals(inputPassword)) {
-      System.out.println("Login Successful!!!\n");
+      System.out.println("Login Successful!!!");
       return true;
     } else {
       System.out.println("Username or Password does not match!!!\n");
@@ -72,33 +27,25 @@ public class App {
     }
   }
 
-  private static void printMenu() {
-    System.out.println("\nInventory Management System");
-    System.out.println("---------------------------------------------------");
-    System.out.println("1. Add item");
-    System.out.println("2. Remove item");
-    System.out.println("3. Update item");
-    System.out.println("4. Print inventory");
-    System.out.println("5. Quit");
-    System.out.print("Enter choice: ");
-  }
-
   private static void addItem() {
+    System.out.println("\nAdd new item");
+    System.out.println("------------");
     System.out.print("Enter SKU: ");
     String sku = scanner.nextLine();
     System.out.print("Enter item name: ");
     String name = scanner.nextLine();
     System.out.print("Enter item category: ");
     String category = scanner.nextLine();
-    System.out.print("Enter item quantity: ");
-    int quantity = scanner.nextInt();
     System.out.print("Enter item price: ");
     double price = scanner.nextDouble();
     scanner.nextLine();
+    System.out.print("Enter item quantity: ");
+    int quantity = scanner.nextInt();
 
     Item item = new Item(sku, name, category, quantity, price);
     inventory.add(item);
-    System.out.println("\nItem added to inventory.");
+    System.out.println("Item added to inventory.");
+    printInventory();
   }
 
   private static void removeItem() {
@@ -117,6 +64,7 @@ public class App {
 
     if (itemRemoved) {
       System.out.println("\nItem removed from inventory.");
+      printInventory();
     } else {
       System.out.println("\nItem not found in inventory.");
     }
@@ -150,9 +98,16 @@ public class App {
           double price = Double.parseDouble(priceString);
           item.setPrice(price);
         }
-
+        System.out.print("Enter new item quantity(leave blank if no change): ");
+        String quantityString = scanner.nextLine();
+        if (!quantityString.isEmpty()) {
+          int quantity = Integer.parseInt(quantityString);
+          item.setQuantity(quantity);
+        }
         itemUpdated = true;
         System.out.println("\nItem updated.");
+        printInventory();
+
         break;
       }
     }
@@ -160,6 +115,21 @@ public class App {
     if (!itemUpdated) {
       System.out.println("\nItem not found in inventory.");
     }
+  }
+
+  // ! ||--------------------------------------------------------------------------------||
+  // ! ||                                      V                                         ||
+  // ! ||--------------------------------------------------------------------------------||
+
+  private static void printMenu() {
+    System.out.println("\nInventory Management System");
+    System.out.println("----------------------------");
+    System.out.println("1. Add item");
+    System.out.println("2. Remove item");
+    System.out.println("3. Update item");
+    System.out.println("4. Print inventory");
+    System.out.println("5. Quit");
+    System.out.print("Enter choice: ");
   }
 
   private static void printInventory() {
@@ -173,7 +143,7 @@ public class App {
       "Quantity"
     );
     System.out.println(
-      "------------------------------------------------------------------"
+      "----------------------------------------------------------------"
     );
     for (Item item : inventory) {
       System.out.printf(
@@ -184,6 +154,58 @@ public class App {
         item.getPrice(),
         item.getQuantity()
       );
+    }
+  }
+
+  // ! ||--------------------------------------------------------------------------------||
+  // ! ||                                      C                                         ||
+  // ! ||--------------------------------------------------------------------------------||
+  public static void main(String[] args) {
+    System.out.println("");
+    controlProgram();
+    scanner.close();
+    System.out.println("");
+  }
+
+  static void controlProgram() {
+    boolean passedUserValidation = false;
+    System.out.println("User Login");
+    System.out.println("----------");
+    do {
+      System.out.print("Enter username: ");
+      String username = scanner.nextLine();
+      System.out.print("Enter password: ");
+      String password = scanner.nextLine();
+      passedUserValidation = validateLogin(username, password);
+      if (passedUserValidation) {
+        break;
+      }
+    } while (!passedUserValidation);
+    boolean quit = false;
+    while (!quit) {
+      printMenu();
+      int choice = scanner.nextInt();
+      scanner.nextLine(); // consume the newline character
+      switch (choice) {
+        case 1:
+          addItem();
+          break;
+        case 2:
+          removeItem();
+          break;
+        case 3:
+          updateItem();
+          break;
+        case 4:
+          printInventory();
+          break;
+        case 5:
+          quit = true;
+          break;
+        default:
+          System.out.println("Invalid choice.");
+          break;
+      }
     }
   }
 }
